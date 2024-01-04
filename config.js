@@ -51,7 +51,7 @@ export const config = {
         },
 
         "utils": {
-            url: "https://github.com/STForScratch/ScratchTools",
+            url: "https://github.com/UtilsForTheWeb/utils-new",
             img: './imgs/utils.png'
         },
 
