@@ -28,11 +28,16 @@ for (const x of config.elements.desktopIcons) {
 
 function initIcon(element) {
     element.addEventListener('click', function() {
-        makeWindow(element.getAttribute("windowId"), element)
+        const src = element.querySelectorAll('img')[0].src
+        const innerText = element.querySelectorAll('span')[0].innerText
+        makeWindow(element.getAttribute("windowId"), {
+            windowImg: src,
+            windowText: innerText
+        })
     })
 }
 
-function makeWindow(id, element) {
+function makeWindow(id, {descText, descUrl, windowImg, windowText}) {
     const main = document.createElement('div')
     main.classList = "windowMain"
     document.body.appendChild(main)
@@ -42,12 +47,12 @@ function makeWindow(id, element) {
     main.appendChild(windowBar)
 
     const windowImage = document.createElement('img')
-    windowImage.src = element.querySelectorAll('img')[0].src
+    windowImage.src = windowImg
     windowImage.style.fill = "white"
     windowBar.appendChild(windowImage)
 
     const windowName = document.createElement('span')
-    windowName.innerText = element.querySelectorAll('span')[0].innerText
+    windowName.innerText = windowText
     windowBar.appendChild(windowName)
 
     const deleteButton = document.createElement('div')
@@ -65,6 +70,106 @@ function makeWindow(id, element) {
             text.innerText = config.info.aboutText
 
             windowContent.appendChild(text)
+
+            break;
+
+        case 'social':
+            windowContent.style.display = "flex"
+            windowContent.style.flexDirection = "row"
+
+            for (const x in config.socials) {
+                const main = document.createElement('a')
+                main.classList = "socialButton"
+                main.href = config.socials[x].url
+                main.target = "_blank"
+
+                const img = document.createElement('img')
+                img.src = config.socials[x].img
+
+                const span = document.createElement('span')
+                span.innerText = x
+
+                windowContent.appendChild(main)
+                main.appendChild(img)
+                main.appendChild(span)
+            }
+
+            break;
+
+        case 'projects':
+            windowContent.style.display = "flex"
+            windowContent.style.flexDirection = "row"
+
+            for (const x in config.projects) {
+                const main = document.createElement('div')
+                main.classList = "projectButton"
+
+                const img = document.createElement('img')
+                img.src = config.projects[x].img
+
+                const span = document.createElement('span')
+                span.innerText = x
+
+                windowContent.appendChild(main)
+                main.appendChild(img)
+                main.appendChild(span)
+
+                main.addEventListener('click', function() {
+                    makeWindow("projectInfo", {
+                        descText: config.projects[x].description,
+                        descUrl: config.projects[x].url,
+                        windowImg: config.projects[x].img,
+                        windowText: x,
+                    })
+                })
+            }
+
+            break;
+
+        case 'projectInfo':
+            windowContent.style.display = "relative"
+
+            const header = document.createElement('h1');
+            header.innerText = windowText;
+
+            const description = document.createElement('span');
+            description.innerText = descText;
+
+            const a = document.createElement('a')
+            a.innerText = "Check it out!"
+            a.classList = "border projectTabButton"
+            a.href = descUrl
+            a.target = "_blank"
+
+            windowContent.appendChild(header)
+            windowContent.appendChild(description)
+            windowContent.appendChild(a)
+
+            break;
+
+        case 'contributions':
+
+            windowContent.style.display = "flex"
+            windowContent.style.flexDirection = "row"
+
+            for (const x in config.contributions) {
+                const main = document.createElement('a')
+                main.classList = "contributeButton"
+                main.href = config.contributions[x].url
+                main.target = "_blank"
+
+                const img = document.createElement('img')
+                img.src = config.contributions[x].img
+
+                const span = document.createElement('span')
+                span.innerText = x
+
+                windowContent.appendChild(main)
+                main.appendChild(img)
+                main.appendChild(span)
+            }
+
+            break
     }
 
     initWindow(main)
@@ -77,13 +182,16 @@ function initWindow(window) {
     const windowBar = window.querySelectorAll('div.windowBar')[0]
     const close = window.querySelectorAll('div.deleteButton')[0]
 
+
+    window.addEventListener('mousedown', function() {
+        index++
+        window.style.zIndex = index
+    })
+
     windowBar.addEventListener('mousedown', function(e) {
         isMouseDown = true;
         offsetX = e.clientX - window.getBoundingClientRect().left;
         offsetY = e.clientY - window.getBoundingClientRect().top;
-
-        index++
-        window.style.zIndex = index
     })
 
     windowBar.addEventListener('mouseup', function() {
